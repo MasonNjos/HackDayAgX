@@ -1,0 +1,30 @@
+# Development setup: both services hot reload when you save a file.
+# For a production build, use: docker compose -f docker-compose.prod.yml up --build
+services:
+  backend:
+    build:
+      context: ./Backend
+      target: dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Backend/app:/app/app
+    env_file:
+      - path: ./Backend/.env
+        required: false
+
+  frontend:
+    build:
+      context: ./Frontend
+      target: dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./Frontend:/app
+      # Keep the container's Linux node_modules instead of your Mac's
+      - /app/node_modules
+    environment:
+      - API_PROXY_TARGET=http://backend:8000
+      - VITE_USE_POLLING=true
+    depends_on:
+      - backend
