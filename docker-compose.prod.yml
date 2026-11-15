@@ -1,0 +1,21 @@
+services:
+  backend:
+    build:
+      context: ./Backend
+      target: prod
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: ./Backend/.env
+        required: false
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./Frontend
+      target: prod
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
